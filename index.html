@@ -14,7 +14,6 @@
   :root {
     --blue: #185FA5;
     --blue-light: #E6F1FB;
-    --blue-mid: #378ADD;
     --red: #E24B4A;
     --red-light: #FAECE7;
     --red-dark: #4A1B0C;
@@ -35,89 +34,53 @@
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #1a1a18;
-      --card: #2C2C2A;
-      --text: #F1EFE8;
-      --text2: #B4B2A9;
-      --text3: #888780;
-      --border: rgba(255,255,255,0.10);
-      --border2: rgba(255,255,255,0.18);
+      --bg: #1a1a18; --card: #2C2C2A;
+      --text: #F1EFE8; --text2: #B4B2A9; --text3: #888780;
+      --border: rgba(255,255,255,0.10); --border2: rgba(255,255,255,0.18);
       --blue-light: #0C447C;
-      --green-light: #173404;
-      --green-dark: #C0DD97;
-      --amber-light: #412402;
-      --amber-dark: #FAC775;
-      --red-light: #501313;
-      --red-dark: #F7C1C1;
+      --green-light: #173404; --green-dark: #C0DD97;
+      --amber-light: #412402; --amber-dark: #FAC775;
+      --red-light: #501313; --red-dark: #F7C1C1;
     }
   }
 
   html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
+    height: 100%; background: var(--bg); color: var(--text);
     font-family: -apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
-    font-size: 16px;
-    -webkit-tap-highlight-color: transparent;
+    font-size: 16px; -webkit-tap-highlight-color: transparent;
   }
 
-  #app {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 16px 14px 40px;
-  }
+  #app { max-width: 480px; margin: 0 auto; padding: 16px 14px 48px; }
 
-  /* header */
-  .app-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 0 18px;
-  }
-  .app-title { font-size: 18px; font-weight: 600; color: var(--text); }
+  .app-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 0 18px; }
+  .app-title { font-size: 18px; font-weight: 600; }
   .app-date { font-size: 13px; color: var(--text3); }
 
-  /* section label */
   .sec { font-size: 11px; color: var(--text3); letter-spacing: 0.07em; text-transform: uppercase; font-weight: 600; margin: 18px 0 8px; }
 
-  /* card base */
-  .card {
-    background: var(--card);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 18px;
-    margin-bottom: 10px;
-  }
+  .card { background: var(--card); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 10px; }
 
-  /* next dose card */
   #next-card { display: flex; align-items: center; gap: 18px; }
-  #ring-wrap { flex-shrink: 0; }
   #next-info { flex: 1; min-width: 0; }
   #next-label { font-size: 12px; color: var(--text3); margin-bottom: 2px; }
-  #next-time { font-size: 38px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 4px; letter-spacing: -1px; }
+  #next-time { font-size: 38px; font-weight: 700; line-height: 1; margin-bottom: 4px; letter-spacing: -1px; }
   #next-cd { font-size: 14px; color: var(--text2); }
   #next-cd.urgent { color: var(--red); font-weight: 600; }
 
-  /* take button */
-  #take-btn {
+  .btn-primary {
     width: 100%; padding: 16px; font-size: 18px; font-weight: 600;
     border-radius: var(--radius-sm); border: none;
     background: var(--blue); color: #fff; cursor: pointer;
-    margin-bottom: 10px; letter-spacing: 0.02em;
+    margin-bottom: 10px; -webkit-appearance: none;
     transition: opacity 0.15s, transform 0.1s;
-    -webkit-appearance: none;
   }
-  #take-btn:active { transform: scale(0.97); opacity: 0.9; }
-  #take-btn:disabled {
-    background: var(--border2); color: var(--text3); cursor: default; transform: none;
-  }
+  .btn-primary:active { transform: scale(0.97); opacity: 0.9; }
+  .btn-primary:disabled { background: var(--border2); color: var(--text3); cursor: default; transform: none; }
 
-  /* alarm panel */
   #alarm-panel {
     background: var(--card); border: 0.5px solid var(--border);
     border-radius: var(--radius-sm); padding: 12px 16px;
-    margin-bottom: 10px; display: flex; flex-wrap: wrap;
-    align-items: center; gap: 10px;
+    margin-bottom: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
   }
   .al-label { font-size: 13px; color: var(--text2); flex: 1; }
   #alarm-toggle {
@@ -128,10 +91,9 @@
   }
   #alarm-toggle:checked { background: var(--blue); }
   #alarm-toggle::after {
-    content: ''; position: absolute;
-    width: 20px; height: 20px; border-radius: 50%;
-    background: white; top: 3px; left: 3px; transition: left 0.2s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    content: ''; position: absolute; width: 20px; height: 20px;
+    border-radius: 50%; background: white; top: 3px; left: 3px;
+    transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.25);
   }
   #alarm-toggle:checked::after { left: 21px; }
   #al-status { font-size: 11px; color: var(--text3); width: 100%; }
@@ -141,7 +103,6 @@
     color: var(--text2); cursor: pointer; -webkit-appearance: none;
   }
 
-  /* timeline */
   #timeline-wrap {
     background: var(--card); border: 0.5px solid var(--border);
     border-radius: var(--radius); padding: 12px 10px 6px;
@@ -149,43 +110,71 @@
   }
   #tl-svg { display: block; min-width: 320px; width: 100%; }
 
-  /* today history */
   .h-row {
     display: flex; align-items: center; gap: 8px;
-    padding: 7px 0; border-bottom: 0.5px solid var(--border);
-    font-size: 14px;
+    padding: 7px 0; border-bottom: 0.5px solid var(--border); font-size: 14px;
   }
   .h-row:last-child { border-bottom: none; }
   .h-num { font-size: 11px; color: var(--text3); min-width: 26px; }
   .h-sched { color: var(--text3); min-width: 46px; font-size: 13px; }
   .h-arrow { font-size: 11px; color: var(--text3); }
-  .h-actual { font-weight: 600; color: var(--text); min-width: 46px; }
-  .badge {
-    font-size: 11px; padding: 2px 8px; border-radius: 20px;
-    background: var(--border); color: var(--text2);
-  }
+  .h-actual { font-weight: 600; min-width: 46px; }
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; background: var(--border); color: var(--text2); }
   .badge.ok { background: var(--green-light); color: var(--green-dark); }
   .badge.late { background: var(--amber-light); color: var(--amber-dark); }
   .badge.vlate { background: var(--red-light); color: var(--red-dark); }
   .h-pending { color: var(--text3); font-size: 13px; }
 
-  /* week toggle */
-  #week-btn {
-    width: 100%; padding: 11px; font-size: 14px;
-    border-radius: var(--radius-sm); border: 0.5px solid var(--border2);
-    background: var(--card); color: var(--text2);
-    cursor: pointer; margin-bottom: 10px; -webkit-appearance: none;
+  /* edit section */
+  #edit-section {
+    background: var(--card); border: 0.5px solid var(--border);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 10px;
   }
+  .edit-title { font-size: 12px; color: var(--text3); letter-spacing: 0.05em; font-weight: 600; margin-bottom: 12px; }
+  .edit-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .edit-row:last-child { margin-bottom: 0; }
+  .btn-edit {
+    flex: 1; padding: 12px 8px; font-size: 13px; font-weight: 600;
+    border-radius: var(--radius-sm); border: 0.5px solid var(--border2);
+    background: transparent; color: var(--text2); cursor: pointer; -webkit-appearance: none;
+    transition: background 0.15s;
+  }
+  .btn-edit:active { background: var(--border); }
+  .btn-edit.danger { border-color: rgba(226,75,74,0.4); color: var(--red); }
+  .btn-edit.danger:active { background: var(--red-light); }
+
+  #week-btn { width: 100%; padding: 11px; font-size: 14px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); background: var(--card); color: var(--text2); cursor: pointer; margin-bottom: 10px; -webkit-appearance: none; }
   #week-panel { display: none; }
   #week-panel.open { display: block; }
   .day-sec { margin-bottom: 12px; }
-  .day-hdr {
-    font-size: 12px; font-weight: 600; color: var(--text2);
-    margin-bottom: 5px; padding-bottom: 4px;
-    border-bottom: 0.5px solid var(--border);
-  }
+  .day-hdr { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 5px; padding-bottom: 4px; border-bottom: 0.5px solid var(--border); }
   .w-row { display: flex; gap: 8px; font-size: 13px; padding: 2px 0; color: var(--text2); align-items: center; }
   .w-time { min-width: 44px; color: var(--text); font-weight: 600; }
+
+  /* confirm sheet */
+  #confirm-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 8000;
+    align-items: flex-end; justify-content: center;
+  }
+  #confirm-bg.on { display: flex; }
+  #confirm-box {
+    background: var(--card); border-radius: var(--radius) var(--radius) 0 0;
+    padding: 24px 20px 40px; width: 100%; max-width: 480px;
+  }
+  .cf-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .cf-msg { font-size: 14px; color: var(--text2); margin-bottom: 22px; line-height: 1.6; }
+  .cf-btns { display: flex; gap: 10px; }
+  .cf-cancel {
+    flex: 1; padding: 14px; font-size: 15px; border-radius: var(--radius-sm);
+    border: 0.5px solid var(--border2); background: transparent;
+    color: var(--text2); cursor: pointer; -webkit-appearance: none;
+  }
+  .cf-ok {
+    flex: 1; padding: 14px; font-size: 15px; font-weight: 700;
+    border-radius: var(--radius-sm); border: none;
+    background: var(--red); color: white; cursor: pointer; -webkit-appearance: none;
+  }
 
   /* alarm overlay */
   #overlay {
@@ -216,14 +205,13 @@
 
   <div class="sec">次の服薬</div>
   <div class="card" id="next-card">
-    <div id="ring-wrap">
+    <div style="flex-shrink:0">
       <svg width="72" height="72" viewBox="0 0 72 72">
         <circle cx="36" cy="36" r="29" fill="none" stroke="var(--border2)" stroke-width="5"/>
         <circle id="ring" cx="36" cy="36" r="29" fill="none" stroke="var(--blue)" stroke-width="5"
           stroke-linecap="round" stroke-dasharray="182.2" stroke-dashoffset="182.2"
           transform="rotate(-90 36 36)" style="transition:stroke-dashoffset 2s linear,stroke 0.4s"/>
-        <text x="36" y="40" text-anchor="middle" font-size="12" font-weight="600"
-          fill="var(--text)" id="ring-txt">--</text>
+        <text x="36" y="40" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text)" id="ring-txt">--</text>
       </svg>
     </div>
     <div id="next-info">
@@ -233,7 +221,7 @@
     </div>
   </div>
 
-  <button id="take-btn">今、飲みました ✓</button>
+  <button class="btn-primary" id="take-btn">今、飲みました ✓</button>
 
   <div id="alarm-panel">
     <span class="al-label">アラーム</span>
@@ -250,9 +238,33 @@
   <div class="sec">本日の記録</div>
   <div class="card" id="today-hist"></div>
 
+  <div class="sec">修正・削除</div>
+  <div id="edit-section">
+    <div class="edit-title">記録の修正・リセット</div>
+    <div class="edit-row">
+      <button class="btn-edit" id="undo-btn">↩ 直近の1件を取り消す</button>
+    </div>
+    <div class="edit-row">
+      <button class="btn-edit danger" id="reset-today-btn">今日をリセット</button>
+      <button class="btn-edit danger" id="reset-all-btn">7日分を全消去</button>
+    </div>
+  </div>
+
   <button id="week-btn">過去7日間の記録 ▾</button>
   <div id="week-panel">
     <div class="card" id="week-content"></div>
+  </div>
+</div>
+
+<!-- confirm sheet -->
+<div id="confirm-bg">
+  <div id="confirm-box">
+    <div class="cf-title" id="cf-title"></div>
+    <div class="cf-msg" id="cf-msg"></div>
+    <div class="cf-btns">
+      <button class="cf-cancel" id="cf-cancel">キャンセル</button>
+      <button class="cf-ok" id="cf-ok">削除する</button>
+    </div>
   </div>
 </div>
 
@@ -276,7 +288,6 @@ function ac() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   return audioCtx;
 }
-
 function playSound(loops) {
   const ctx = ac();
   if (ctx.state === 'suspended') ctx.resume();
@@ -304,12 +315,8 @@ function p2(n) { return String(n).padStart(2,'0'); }
 function fmt(d) { return `${p2(d.getHours())}:${p2(d.getMinutes())}`; }
 function diffMin(a, b) { return Math.round((a - b) / 60000); }
 
-function loadH() {
-  try { return JSON.parse(localStorage.getItem(SK) || '{}'); } catch { return {}; }
-}
-function saveH(h) {
-  try { localStorage.setItem(SK, JSON.stringify(h)); } catch {}
-}
+function loadH() { try { return JSON.parse(localStorage.getItem(SK) || '{}'); } catch { return {}; } }
+function saveH(h) { try { localStorage.setItem(SK, JSON.stringify(h)); } catch {} }
 function pruneH(h) {
   const c = new Date(); c.setDate(c.getDate() - 7);
   const ck = `${c.getFullYear()}-${p2(c.getMonth()+1)}-${p2(c.getDate())}`;
@@ -337,30 +344,65 @@ function nextTime() {
 }
 
 function takeMed() {
-  const i = nextIdx();
-  if (i === null) return;
+  const i = nextIdx(); if (i === null) return;
   const k = todayKey();
   if (!hist[k]) hist[k] = [];
   hist[k].push(Date.now());
-  saveH(hist);
-  render();
+  saveH(hist); render();
+}
+function undoLast() {
+  const k = todayKey();
+  if (!hist[k] || !hist[k].length) return;
+  hist[k].pop();
+  if (!hist[k].length) delete hist[k];
+  saveH(hist); render();
+}
+function resetToday() {
+  delete hist[todayKey()];
+  firedKeys = {};
+  saveH(hist); render();
+}
+function resetAll() {
+  hist = {}; firedKeys = {};
+  saveH(hist); render();
 }
 
-function showOverlay(idx) {
-  alarmRinging = true;
-  document.getElementById('ov-title').textContent = `第 ${idx + 1} 回目の服薬時間です`;
-  document.getElementById('ov-sub').textContent = `予定時刻：${fmt(scheduled[idx])}`;
-  document.getElementById('overlay').classList.add('on');
-  playSound(5);
+// confirm sheet
+let confirmCb = null;
+function showConfirm(title, msg, cb) {
+  document.getElementById('cf-title').textContent = title;
+  document.getElementById('cf-msg').textContent = msg;
+  confirmCb = cb;
+  document.getElementById('confirm-bg').classList.add('on');
 }
-function hideOverlay() {
-  alarmRinging = false;
-  document.getElementById('overlay').classList.remove('on');
-}
+document.getElementById('cf-cancel').addEventListener('click', () => {
+  document.getElementById('confirm-bg').classList.remove('on'); confirmCb = null;
+});
+document.getElementById('cf-ok').addEventListener('click', () => {
+  document.getElementById('confirm-bg').classList.remove('on');
+  if (confirmCb) { confirmCb(); confirmCb = null; }
+});
+document.getElementById('confirm-bg').addEventListener('click', function(e) {
+  if (e.target === this) { this.classList.remove('on'); confirmCb = null; }
+});
 
-document.getElementById('ov-dismiss').addEventListener('click', () => { hideOverlay(); takeMed(); });
 document.getElementById('take-btn').addEventListener('click', takeMed);
 document.getElementById('test-btn').addEventListener('click', () => playSound(1));
+
+document.getElementById('undo-btn').addEventListener('click', () => {
+  const tk = today();
+  if (!tk.length) { alert('取り消せる記録がありません'); return; }
+  const last = fmt(new Date(tk[tk.length - 1]));
+  showConfirm('直近の記録を取り消す', `${last} の記録（第${tk.length}回目）を削除します。よろしいですか？`, undoLast);
+});
+document.getElementById('reset-today-btn').addEventListener('click', () => {
+  if (!today().length) { alert('本日の記録はありません'); return; }
+  showConfirm('今日をリセット', '本日の服薬記録をすべて削除します。この操作は元に戻せません。', resetToday);
+});
+document.getElementById('reset-all-btn').addEventListener('click', () => {
+  showConfirm('7日分を全消去', '過去7日間の服薬記録をすべて削除します。この操作は元に戻せません。', resetAll);
+});
+
 document.getElementById('alarm-toggle').checked = alarmOn;
 document.getElementById('alarm-toggle').addEventListener('change', function() {
   alarmOn = this.checked;
@@ -373,6 +415,20 @@ document.getElementById('week-btn').addEventListener('click', () => {
   b.textContent = p.classList.contains('open') ? '過去7日間の記録 ▴' : '過去7日間の記録 ▾';
   renderWeek();
 });
+
+// alarm overlay
+function showOverlay(idx) {
+  alarmRinging = true;
+  document.getElementById('ov-title').textContent = `第 ${idx + 1} 回目の服薬時間です`;
+  document.getElementById('ov-sub').textContent = `予定時刻：${fmt(scheduled[idx])}`;
+  document.getElementById('overlay').classList.add('on');
+  playSound(5);
+}
+function hideOverlay() {
+  alarmRinging = false;
+  document.getElementById('overlay').classList.remove('on');
+}
+document.getElementById('ov-dismiss').addEventListener('click', () => { hideOverlay(); takeMed(); });
 
 function checkAlarm() {
   if (!alarmOn || alarmRinging) return;
@@ -389,8 +445,7 @@ function checkAlarm() {
 function renderHeader() {
   const d = new Date();
   const days = ['日','月','火','水','木','金','土'];
-  document.getElementById('hdr-date').textContent =
-    `${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
+  document.getElementById('hdr-date').textContent = `${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
 }
 
 function renderNext() {
@@ -399,7 +454,6 @@ function renderNext() {
   const ring = document.getElementById('ring');
   const rtxt = document.getElementById('ring-txt');
   const C = 182.2;
-
   if (!nt) {
     document.getElementById('next-time').textContent = '完了！';
     document.getElementById('next-cd').textContent = '本日の服薬が全て終わりました';
@@ -408,19 +462,15 @@ function renderNext() {
     ring.style.strokeDashoffset = '0'; rtxt.textContent = '完';
     return;
   }
-
   const now = Date.now(), diffMs = nt.getTime() - now;
   const prog = Math.min(1, Math.max(0, (INTERVAL - diffMs) / INTERVAL));
   ring.style.strokeDashoffset = (C * (1 - prog)).toFixed(1);
   document.getElementById('next-time').textContent = fmt(nt);
-
   const cd = document.getElementById('next-cd');
   if (diffMs <= 0) {
     const over = Math.round(-diffMs / 60000);
     cd.textContent = `服薬時刻を ${over} 分過ぎています`;
-    cd.className = 'urgent';
-    ring.style.stroke = 'var(--red)';
-    rtxt.textContent = '過';
+    cd.className = 'urgent'; ring.style.stroke = 'var(--red)'; rtxt.textContent = '過';
   } else {
     const mins = Math.floor(diffMs / 60000);
     const h = Math.floor(mins / 60), m = mins % 60;
@@ -429,7 +479,6 @@ function renderNext() {
     ring.style.stroke = mins <= 15 ? 'var(--red)' : 'var(--blue)';
     rtxt.textContent = mins < 60 ? `${mins}分` : `${h}h`;
   }
-
   btn.disabled = false;
   btn.textContent = `今、飲みました（第${tk.length + 1}回目）✓`;
 }
@@ -437,12 +486,9 @@ function renderNext() {
 function renderTimeline() {
   const svg = document.getElementById('tl-svg');
   const tk = today(), now = Date.now();
-  const s0 = scheduled[0].getTime();
-  const sEnd = scheduled[DOSES-1].getTime() + INTERVAL * 0.5;
-  const span = sEnd - s0;
-  const W = 500, PAD = 14, trackY = 44;
+  const s0 = scheduled[0].getTime(), sEnd = scheduled[DOSES-1].getTime() + INTERVAL * 0.5;
+  const span = sEnd - s0, W = 500, PAD = 14, trackY = 44;
   function xOf(ms) { return PAD + ((ms - s0) / span) * (W - PAD*2); }
-
   let h = `<line x1="${PAD}" y1="${trackY}" x2="${W-PAD}" y2="${trackY}" stroke="var(--border2)" stroke-width="2"/>`;
   scheduled.forEach((t, i) => {
     const x = xOf(t.getTime()).toFixed(1);
@@ -484,7 +530,7 @@ function renderWeek() {
   if (!days.length) { c.innerHTML = `<div style="font-size:14px;color:var(--text3)">過去の記録はありません</div>`; return; }
   let h = '';
   for (const day of days) {
-    const doses = hist[day], [y,m,d] = day.split('-');
+    const doses = hist[day], [y, m, d] = day.split('-');
     const base = new Date(+y, +m-1, +d, START_H, START_M, 0, 0);
     const sc = Array.from({length: DOSES}, (_, i) => new Date(base.getTime() + i * INTERVAL));
     h += `<div class="day-sec"><div class="day-hdr">${+m}月${+d}日（${doses.length}/${DOSES}回）</div>`;
@@ -500,26 +546,17 @@ function renderWeek() {
 }
 
 function render() {
-  renderHeader();
-  renderNext();
-  renderTimeline();
-  renderToday();
-  checkAlarm();
+  renderHeader(); renderNext(); renderTimeline(); renderToday(); checkAlarm();
 }
 
 render();
 setInterval(render, 15000);
 
-// wake lock (keeps screen on if supported)
 async function requestWakeLock() {
-  try {
-    if ('wakeLock' in navigator) await navigator.wakeLock.request('screen');
-  } catch {}
+  try { if ('wakeLock' in navigator) await navigator.wakeLock.request('screen'); } catch {}
 }
 requestWakeLock();
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') requestWakeLock();
-});
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') requestWakeLock(); });
 </script>
 </body>
 </html>
