@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="服薬メモ">
+<meta name="theme-color" content="#ffffff">
+<title>服薬メモ</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --blue-mid: #378ADD;
+    --red: #E24B4A;
+    --red-light: #FAECE7;
+    --red-dark: #4A1B0C;
+    --green-light: #EAF3DE;
+    --green-dark: #173404;
+    --amber-light: #FAEEDA;
+    --amber-dark: #633806;
+    --bg: #F5F4F0;
+    --card: #FFFFFF;
+    --text: #1a1a18;
+    --text2: #5F5E5A;
+    --text3: #888780;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.16);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18;
+      --card: #2C2C2A;
+      --text: #F1EFE8;
+      --text2: #B4B2A9;
+      --text3: #888780;
+      --border: rgba(255,255,255,0.10);
+      --border2: rgba(255,255,255,0.18);
+      --blue-light: #0C447C;
+      --green-light: #173404;
+      --green-dark: #C0DD97;
+      --amber-light: #412402;
+      --amber-dark: #FAC775;
+      --red-light: #501313;
+      --red-dark: #F7C1C1;
+    }
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+    font-size: 16px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px 14px 40px;
+  }
+
+  /* header */
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0 18px;
+  }
+  .app-title { font-size: 18px; font-weight: 600; color: var(--text); }
+  .app-date { font-size: 13px; color: var(--text3); }
+
+  /* section label */
+  .sec { font-size: 11px; color: var(--text3); letter-spacing: 0.07em; text-transform: uppercase; font-weight: 600; margin: 18px 0 8px; }
+
+  /* card base */
+  .card {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 18px;
+    margin-bottom: 10px;
+  }
+
+  /* next dose card */
+  #next-card { display: flex; align-items: center; gap: 18px; }
+  #ring-wrap { flex-shrink: 0; }
+  #next-info { flex: 1; min-width: 0; }
+  #next-label { font-size: 12px; color: var(--text3); margin-bottom: 2px; }
+  #next-time { font-size: 38px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 4px; letter-spacing: -1px; }
+  #next-cd { font-size: 14px; color: var(--text2); }
+  #next-cd.urgent { color: var(--red); font-weight: 600; }
+
+  /* take button */
+  #take-btn {
+    width: 100%; padding: 16px; font-size: 18px; font-weight: 600;
+    border-radius: var(--radius-sm); border: none;
+    background: var(--blue); color: #fff; cursor: pointer;
+    margin-bottom: 10px; letter-spacing: 0.02em;
+    transition: opacity 0.15s, transform 0.1s;
+    -webkit-appearance: none;
+  }
+  #take-btn:active { transform: scale(0.97); opacity: 0.9; }
+  #take-btn:disabled {
+    background: var(--border2); color: var(--text3); cursor: default; transform: none;
+  }
+
+  /* alarm panel */
+  #alarm-panel {
+    background: var(--card); border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 16px;
+    margin-bottom: 10px; display: flex; flex-wrap: wrap;
+    align-items: center; gap: 10px;
+  }
+  .al-label { font-size: 13px; color: var(--text2); flex: 1; }
+  #alarm-toggle {
+    appearance: none; -webkit-appearance: none;
+    width: 44px; height: 26px; border-radius: 13px;
+    background: var(--border2); position: relative; cursor: pointer;
+    transition: background 0.2s; flex-shrink: 0;
+  }
+  #alarm-toggle:checked { background: var(--blue); }
+  #alarm-toggle::after {
+    content: ''; position: absolute;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: white; top: 3px; left: 3px; transition: left 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  }
+  #alarm-toggle:checked::after { left: 21px; }
+  #al-status { font-size: 11px; color: var(--text3); width: 100%; }
+  #test-btn {
+    font-size: 12px; padding: 5px 14px; border-radius: 20px;
+    border: 0.5px solid var(--border2); background: transparent;
+    color: var(--text2); cursor: pointer; -webkit-appearance: none;
+  }
+
+  /* timeline */
+  #timeline-wrap {
+    background: var(--card); border: 0.5px solid var(--border);
+    border-radius: var(--radius); padding: 12px 10px 6px;
+    margin-bottom: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  #tl-svg { display: block; min-width: 320px; width: 100%; }
+
+  /* today history */
+  .h-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 0; border-bottom: 0.5px solid var(--border);
+    font-size: 14px;
+  }
+  .h-row:last-child { border-bottom: none; }
+  .h-num { font-size: 11px; color: var(--text3); min-width: 26px; }
+  .h-sched { color: var(--text3); min-width: 46px; font-size: 13px; }
+  .h-arrow { font-size: 11px; color: var(--text3); }
+  .h-actual { font-weight: 600; color: var(--text); min-width: 46px; }
+  .badge {
+    font-size: 11px; padding: 2px 8px; border-radius: 20px;
+    background: var(--border); color: var(--text2);
+  }
+  .badge.ok { background: var(--green-light); color: var(--green-dark); }
+  .badge.late { background: var(--amber-light); color: var(--amber-dark); }
+  .badge.vlate { background: var(--red-light); color: var(--red-dark); }
+  .h-pending { color: var(--text3); font-size: 13px; }
+
+  /* week toggle */
+  #week-btn {
+    width: 100%; padding: 11px; font-size: 14px;
+    border-radius: var(--radius-sm); border: 0.5px solid var(--border2);
+    background: var(--card); color: var(--text2);
+    cursor: pointer; margin-bottom: 10px; -webkit-appearance: none;
+  }
+  #week-panel { display: none; }
+  #week-panel.open { display: block; }
+  .day-sec { margin-bottom: 12px; }
+  .day-hdr {
+    font-size: 12px; font-weight: 600; color: var(--text2);
+    margin-bottom: 5px; padding-bottom: 4px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .w-row { display: flex; gap: 8px; font-size: 13px; padding: 2px 0; color: var(--text2); align-items: center; }
+  .w-time { min-width: 44px; color: var(--text); font-weight: 600; }
+
+  /* alarm overlay */
+  #overlay {
+    display: none; position: fixed; inset: 0;
+    background: var(--blue); z-index: 9999;
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 24px; padding: 32px;
+  }
+  #overlay.on { display: flex; }
+  .ov-bell { font-size: 56px; animation: bell 0.6s ease-in-out infinite alternate; }
+  @keyframes bell { from { transform: rotate(-12deg); } to { transform: rotate(12deg); } }
+  .ov-title { color: #fff; font-size: 26px; font-weight: 700; text-align: center; line-height: 1.3; }
+  .ov-sub { color: rgba(255,255,255,0.75); font-size: 16px; text-align: center; }
+  #ov-dismiss {
+    margin-top: 12px; padding: 18px 48px; font-size: 20px; font-weight: 700;
+    background: #fff; color: var(--blue); border: none;
+    border-radius: var(--radius-sm); cursor: pointer; -webkit-appearance: none;
+  }
+  #ov-dismiss:active { transform: scale(0.97); }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="app-header">
+    <span class="app-title">服薬メモ</span>
+    <span class="app-date" id="hdr-date"></span>
+  </div>
+
+  <div class="sec">次の服薬</div>
+  <div class="card" id="next-card">
+    <div id="ring-wrap">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle cx="36" cy="36" r="29" fill="none" stroke="var(--border2)" stroke-width="5"/>
+        <circle id="ring" cx="36" cy="36" r="29" fill="none" stroke="var(--blue)" stroke-width="5"
+          stroke-linecap="round" stroke-dasharray="182.2" stroke-dashoffset="182.2"
+          transform="rotate(-90 36 36)" style="transition:stroke-dashoffset 2s linear,stroke 0.4s"/>
+        <text x="36" y="40" text-anchor="middle" font-size="12" font-weight="600"
+          fill="var(--text)" id="ring-txt">--</text>
+      </svg>
+    </div>
+    <div id="next-info">
+      <div id="next-label">次の服薬予定</div>
+      <div id="next-time">--:--</div>
+      <div id="next-cd">読み込み中...</div>
+    </div>
+  </div>
+
+  <button id="take-btn">今、飲みました ✓</button>
+
+  <div id="alarm-panel">
+    <span class="al-label">アラーム</span>
+    <input type="checkbox" id="alarm-toggle" checked>
+    <button id="test-btn">テスト音</button>
+    <div id="al-status">服薬時刻になるとアラームが鳴ります</div>
+  </div>
+
+  <div class="sec">本日のタイムライン</div>
+  <div id="timeline-wrap">
+    <svg id="tl-svg" height="76" viewBox="0 0 500 76" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
+
+  <div class="sec">本日の記録</div>
+  <div class="card" id="today-hist"></div>
+
+  <button id="week-btn">過去7日間の記録 ▾</button>
+  <div id="week-panel">
+    <div class="card" id="week-content"></div>
+  </div>
+</div>
+
+<!-- alarm overlay -->
+<div id="overlay">
+  <div class="ov-bell">💊</div>
+  <div class="ov-title" id="ov-title"></div>
+  <div class="ov-sub" id="ov-sub"></div>
+  <button id="ov-dismiss">飲みました ✓</button>
+</div>
+
+<script>
+const DOSES = 9, INTERVAL = 2 * 60 * 60 * 1000;
+const START_H = 5, START_M = 30;
+const SK = 'pk_med_v2', AK = 'pk_alarm';
+
+let audioCtx = null, alarmRinging = false, firedKeys = {};
+let alarmOn = localStorage.getItem(AK) !== 'false';
+
+function ac() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playSound(loops) {
+  const ctx = ac();
+  if (ctx.state === 'suspended') ctx.resume();
+  const notes = [880, 1100, 880, 1100, 880];
+  let t = ctx.currentTime;
+  for (let l = 0; l < (loops || 3); l++) {
+    notes.forEach(f => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = f; o.type = 'sine';
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.35, t + 0.03);
+      g.gain.linearRampToValueAtTime(0, t + 0.18);
+      o.start(t); o.stop(t + 0.2); t += 0.22;
+    });
+    t += 0.4;
+  }
+}
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`;
+}
+function p2(n) { return String(n).padStart(2,'0'); }
+function fmt(d) { return `${p2(d.getHours())}:${p2(d.getMinutes())}`; }
+function diffMin(a, b) { return Math.round((a - b) / 60000); }
+
+function loadH() {
+  try { return JSON.parse(localStorage.getItem(SK) || '{}'); } catch { return {}; }
+}
+function saveH(h) {
+  try { localStorage.setItem(SK, JSON.stringify(h)); } catch {}
+}
+function pruneH(h) {
+  const c = new Date(); c.setDate(c.getDate() - 7);
+  const ck = `${c.getFullYear()}-${p2(c.getMonth()+1)}-${p2(c.getDate())}`;
+  Object.keys(h).forEach(k => { if (k < ck) delete h[k]; });
+  return h;
+}
+function sched() {
+  const n = new Date();
+  const b = new Date(n.getFullYear(), n.getMonth(), n.getDate(), START_H, START_M, 0, 0);
+  return Array.from({length: DOSES}, (_, i) => new Date(b.getTime() + i * INTERVAL));
+}
+
+let hist = pruneH(loadH());
+let scheduled = sched();
+
+function today() { return hist[todayKey()] || []; }
+function nextIdx() { const t = today().length; return t < DOSES ? t : null; }
+function nextTime() {
+  const tk = today();
+  if (tk.length >= DOSES) return null;
+  if (tk.length === 0) return scheduled[0];
+  const fromLast = new Date(tk[tk.length-1] + INTERVAL);
+  const fromSched = scheduled[tk.length];
+  return fromLast > fromSched ? fromLast : fromSched;
+}
+
+function takeMed() {
+  const i = nextIdx();
+  if (i === null) return;
+  const k = todayKey();
+  if (!hist[k]) hist[k] = [];
+  hist[k].push(Date.now());
+  saveH(hist);
+  render();
+}
+
+function showOverlay(idx) {
+  alarmRinging = true;
+  document.getElementById('ov-title').textContent = `第 ${idx + 1} 回目の服薬時間です`;
+  document.getElementById('ov-sub').textContent = `予定時刻：${fmt(scheduled[idx])}`;
+  document.getElementById('overlay').classList.add('on');
+  playSound(5);
+}
+function hideOverlay() {
+  alarmRinging = false;
+  document.getElementById('overlay').classList.remove('on');
+}
+
+document.getElementById('ov-dismiss').addEventListener('click', () => { hideOverlay(); takeMed(); });
+document.getElementById('take-btn').addEventListener('click', takeMed);
+document.getElementById('test-btn').addEventListener('click', () => playSound(1));
+document.getElementById('alarm-toggle').checked = alarmOn;
+document.getElementById('alarm-toggle').addEventListener('change', function() {
+  alarmOn = this.checked;
+  localStorage.setItem(AK, alarmOn ? 'true' : 'false');
+});
+document.getElementById('week-btn').addEventListener('click', () => {
+  const p = document.getElementById('week-panel');
+  const b = document.getElementById('week-btn');
+  p.classList.toggle('open');
+  b.textContent = p.classList.contains('open') ? '過去7日間の記録 ▴' : '過去7日間の記録 ▾';
+  renderWeek();
+});
+
+function checkAlarm() {
+  if (!alarmOn || alarmRinging) return;
+  const tk = today(), idx = tk.length;
+  if (idx >= DOSES) return;
+  const nt = nextTime(); if (!nt) return;
+  const over = Date.now() - nt.getTime();
+  if (over >= 0 && over < 5 * 60 * 1000) {
+    const fk = `${todayKey()}_${idx}`;
+    if (!firedKeys[fk]) { firedKeys[fk] = true; showOverlay(idx); }
+  }
+}
+
+function renderHeader() {
+  const d = new Date();
+  const days = ['日','月','火','水','木','金','土'];
+  document.getElementById('hdr-date').textContent =
+    `${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
+}
+
+function renderNext() {
+  const nt = nextTime(), tk = today();
+  const btn = document.getElementById('take-btn');
+  const ring = document.getElementById('ring');
+  const rtxt = document.getElementById('ring-txt');
+  const C = 182.2;
+
+  if (!nt) {
+    document.getElementById('next-time').textContent = '完了！';
+    document.getElementById('next-cd').textContent = '本日の服薬が全て終わりました';
+    document.getElementById('next-cd').className = '';
+    btn.disabled = true; btn.textContent = '本日の服薬完了 ✓';
+    ring.style.strokeDashoffset = '0'; rtxt.textContent = '完';
+    return;
+  }
+
+  const now = Date.now(), diffMs = nt.getTime() - now;
+  const prog = Math.min(1, Math.max(0, (INTERVAL - diffMs) / INTERVAL));
+  ring.style.strokeDashoffset = (C * (1 - prog)).toFixed(1);
+  document.getElementById('next-time').textContent = fmt(nt);
+
+  const cd = document.getElementById('next-cd');
+  if (diffMs <= 0) {
+    const over = Math.round(-diffMs / 60000);
+    cd.textContent = `服薬時刻を ${over} 分過ぎています`;
+    cd.className = 'urgent';
+    ring.style.stroke = 'var(--red)';
+    rtxt.textContent = '過';
+  } else {
+    const mins = Math.floor(diffMs / 60000);
+    const h = Math.floor(mins / 60), m = mins % 60;
+    cd.textContent = `あと ${h > 0 ? h + '時間' + m + '分' : mins + '分'}`;
+    cd.className = mins <= 15 ? 'urgent' : '';
+    ring.style.stroke = mins <= 15 ? 'var(--red)' : 'var(--blue)';
+    rtxt.textContent = mins < 60 ? `${mins}分` : `${h}h`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = `今、飲みました（第${tk.length + 1}回目）✓`;
+}
+
+function renderTimeline() {
+  const svg = document.getElementById('tl-svg');
+  const tk = today(), now = Date.now();
+  const s0 = scheduled[0].getTime();
+  const sEnd = scheduled[DOSES-1].getTime() + INTERVAL * 0.5;
+  const span = sEnd - s0;
+  const W = 500, PAD = 14, trackY = 44;
+  function xOf(ms) { return PAD + ((ms - s0) / span) * (W - PAD*2); }
+
+  let h = `<line x1="${PAD}" y1="${trackY}" x2="${W-PAD}" y2="${trackY}" stroke="var(--border2)" stroke-width="2"/>`;
+  scheduled.forEach((t, i) => {
+    const x = xOf(t.getTime()).toFixed(1);
+    const fill = i < tk.length ? 'var(--blue)' : (t.getTime() < now ? 'var(--red)' : 'var(--border2)');
+    h += `<circle cx="${x}" cy="${trackY}" r="5" fill="${fill}"/>`;
+    if (i % 2 === 0) h += `<text x="${x}" y="18" text-anchor="middle" font-size="10" fill="var(--text3)">${fmt(t)}</text>`;
+  });
+  tk.forEach(ms => {
+    const x = xOf(ms).toFixed(1);
+    h += `<circle cx="${x}" cy="${trackY}" r="8" fill="none" stroke="var(--blue)" stroke-width="1.5" opacity="0.4"/>`;
+    h += `<text x="${x}" y="${trackY+17}" text-anchor="middle" font-size="10" fill="var(--blue)">${fmt(new Date(ms))}</text>`;
+  });
+  const nx = Math.min(Math.max(xOf(now), PAD), W-PAD).toFixed(1);
+  h += `<line x1="${nx}" y1="${trackY-13}" x2="${nx}" y2="${trackY+13}" stroke="var(--red)" stroke-width="1.5" stroke-dasharray="3,2"/>`;
+  svg.innerHTML = h;
+}
+
+function renderToday() {
+  const tk = today(), wrap = document.getElementById('today-hist');
+  if (!tk.length) { wrap.innerHTML = `<div style="font-size:14px;color:var(--text3);padding:4px 0">まだ記録がありません</div>`; return; }
+  let h = '';
+  for (let i = 0; i < DOSES; i++) {
+    const sc = scheduled[i];
+    if (i < tk.length) {
+      const ac = new Date(tk[i]), d = diffMin(ac, sc);
+      const cls = d > 30 ? 'vlate' : d > 10 ? 'late' : 'ok';
+      const txt = d === 0 ? '予定通り' : d > 0 ? `+${d}分` : `${d}分`;
+      h += `<div class="h-row"><span class="h-num">${i+1}回</span><span class="h-sched">${fmt(sc)}</span><span class="h-arrow">→</span><span class="h-actual">${fmt(ac)}</span><span class="badge ${cls}">${txt}</span></div>`;
+    } else {
+      h += `<div class="h-row"><span class="h-num">${i+1}回</span><span class="h-sched">${fmt(sc)}</span><span class="h-arrow">→</span><span class="h-pending">未服薬</span></div>`;
+    }
+  }
+  wrap.innerHTML = h;
+}
+
+function renderWeek() {
+  const c = document.getElementById('week-content'), tk = todayKey();
+  const days = Object.keys(hist).filter(k => k !== tk).sort().reverse();
+  if (!days.length) { c.innerHTML = `<div style="font-size:14px;color:var(--text3)">過去の記録はありません</div>`; return; }
+  let h = '';
+  for (const day of days) {
+    const doses = hist[day], [y,m,d] = day.split('-');
+    const base = new Date(+y, +m-1, +d, START_H, START_M, 0, 0);
+    const sc = Array.from({length: DOSES}, (_, i) => new Date(base.getTime() + i * INTERVAL));
+    h += `<div class="day-sec"><div class="day-hdr">${+m}月${+d}日（${doses.length}/${DOSES}回）</div>`;
+    doses.forEach((ms, i) => {
+      const ac = new Date(ms), dif = diffMin(ac, sc[i]);
+      const txt = dif === 0 ? '予定通り' : dif > 0 ? `+${dif}分` : `${dif}分`;
+      const col = Math.abs(dif) <= 10 ? 'var(--text3)' : dif > 30 ? 'var(--red)' : 'var(--amber-dark)';
+      h += `<div class="w-row"><span style="color:var(--text3);font-size:11px;min-width:22px">${i+1}</span><span class="w-time">${fmt(ac)}</span><span style="font-size:12px;color:var(--text3)">(予定 ${fmt(sc[i])})</span><span style="font-size:12px;color:${col}">${txt}</span></div>`;
+    });
+    h += '</div>';
+  }
+  c.innerHTML = h;
+}
+
+function render() {
+  renderHeader();
+  renderNext();
+  renderTimeline();
+  renderToday();
+  checkAlarm();
+}
+
+render();
+setInterval(render, 15000);
+
+// wake lock (keeps screen on if supported)
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) await navigator.wakeLock.request('screen');
+  } catch {}
+}
+requestWakeLock();
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') requestWakeLock();
+});
+</script>
+</body>
+</html>
